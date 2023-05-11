@@ -1,0 +1,26 @@
+---
+- hosts: all
+  # remote_user: "{{ user }}"
+  tasks:
+
+  - name: install apache
+    tags: apache
+    package:
+      name: "{{ apache }}"
+      state: latest
+
+  - name: copy default website html file
+    tags: copy_html_file
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+    
+  - name: start apache
+    tags: apache,start_apache,service
+    service:
+      name: "{{ apache }}"
+      state: started
+      enabled: yes
