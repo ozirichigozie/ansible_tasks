@@ -1,2 +1,2 @@
-node-ubuntu ansible_host=3.86.248.84 apache=apache2 sudo_group=sudo
-node-centos ansible_host=54.208.208.159 apache=httpd sudo_group=wheel
+ubuntu-node-1 ansible_host=192.168.53.21 sudo_group=sudo apache=apache2
+centos-node-1 ansible_host=192.168.53.61 sudo_group=wheel apache=httpd

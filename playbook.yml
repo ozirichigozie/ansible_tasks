@@ -1,16 +1,43 @@
 ---
 - hosts: all
-  # remote_user: "{{ user }}"
+
   tasks:
+  - name: create user - cloudlord
+    tags: always
+    user:
+      name: cloudlord
+      groups: "{{ sudo_group }}"
+
+  - name: add ssh_key to the user - cloudlord
+    tags: always
+    authorized_key:
+      user: cloudlord
+      key: "{{ lookup('ansible.builtin.file', '~/.ssh/id_ed25519.pub') }}"
+
+  - name: upgrade & update cache (Ubuntu)
+    tags: update,ubuntu
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: upgrade & update cache (Ubuntu)
+    tags: update,upgrade,centos
+    yum:
+      name: "*"
+      state: latest
+      update_cache: yes
+      exclude: kernel*
+    when: ansible_distribution == "CentOS"
 
   - name: install apache
-    tags: apache
+    tags: install_apache
     package:
       name: "{{ apache }}"
       state: latest
 
-  - name: copy default website html file
-    tags: copy_html_file
+  - name: copy default web file
+    tags: copy_web_file
     copy:
       src: default_site.html
       dest: /var/www/html/index.html
@@ -19,7 +46,7 @@
       mode: 0644
     
   - name: start apache
-    tags: apache,start_apache,service
+    tags: start_apache
     service:
       name: "{{ apache }}"
       state: started
